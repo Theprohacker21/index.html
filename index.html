@@ -1,41 +1,52 @@
-<!DOCTYPE html>
-<html ng-app="airpub" ng-controller="global">
-  <head ng-controller="meta">
-    <base href="/" />
-    <meta charset="UTF-8">
-    <title ng-bind="title"></title>
-    <meta name="fragment" content="!" />
-    <meta name="description" content="{{description}}">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <!-- dependencies stylesheets and scripts, using default GitHub Page CDN -->
-    <link rel="stylesheet" href="http://static.duoshuo.com/airpub/airpub-dependencies.min.css?v=0.3.2">
-    <script src="http://static.duoshuo.com/airpub/airpub-dependencies.min.js?v=0.3.2"></script>
-    <!-- default theme: chill -->
-    <link rel="stylesheet" href="http://static.duoshuo.com/airpub/themes/chill/0.3.0/css/chill.min.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="http://static.duoshuo.com/airpub/themes/chill/0.3.0/favicon.ico" />
-  </head>
-  <body ng-controller="base" ng-class="state.current.controller">
-    <div ui-view="layout"></div>
-    <!-- airpub configs -->
-    <script>
-      var airpubConfigs = {        
-        name: 'Airpub', // 博客名称
-        description: 'Just another Airpub blog', // 博客描述
-        url: 'http://your-uri', // 博客站点永久链接
-        theme: 'chill/0.3.0', // 当前主题与主题版本（如无版本可省略为：`chill`）
-        themePath: 'http://static.duoshuo.com/airpub/themes', // 博客主题根目录
-        upyun: { // 用于上传图片
-          bucket: 'mybucket', // 又拍云 bucket 配置 (可选)
-          form_api_secret: 'xxxxxx' // 又拍云 form_api_secret (可选)
-        }
-      };
-      var duoshuoQuery = {
-        short_name: 'your_duoshuo_short_name' // 修改成你的多说 short_name
-      };
-    </script>
-    <!-- duoshuo embed js -->
-    <script src="http://static.duoshuo.com/embed.unstable.js"></script> 
-    <!-- airpub angular app -->
-    <script src="http://static.duoshuo.com/airpub/airpub.min.js?v=0.3.2"></script>
-  </body>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Scramjet Proxy — Chrome-like UI (Dark Blue)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">S</div>
+        <div class="title">Scramjet</div>
+      </div>
+      <nav>
+        <button class="nav-btn active">Browse</button>
+        <button class="nav-btn">Bookmarks</button>
+        <button class="nav-btn">History</button>
+        <button class="nav-btn">Settings</button>
+      </nav>
+      <div class="sidebar-footer">v1.0</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="window-controls">
+          <span class="dot close"></span>
+          <span class="dot minimize"></span>
+          <span class="dot maximize"></span>
+        </div>
+
+        <div class="address-group">
+          <button id="backBtn" class="ctrl">◀</button>
+          <button id="forwardBtn" class="ctrl">▶</button>
+
+          <input id="urlInput" type="text" placeholder="Enter a URL (https://example.com)" />
+          <button id="goBtn" class="go">Go</button>
+
+          <div class="profile"> </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <iframe id="viewport" src="/proxy?url=https://example.com" frameborder="0"></iframe>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
 </html>
