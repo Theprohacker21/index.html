@@ -1,32 +1,19 @@
-import chromium from "chrome-aws-lambda";
+import httpProxy from 'http-proxy';
 
-export default async function handler(req, res) {
-  const url = req.query.url;
-  if (!url) return res.status(400).send("Missing url");
+const proxy = httpProxy.createProxyServer({ changeOrigin: true, secure: false });
 
-  let browser = null;
+export default function handler(req, res) {
+  const targetUrl = req.query.url;
+  if (!targetUrl) return res.status(400).send("Missing url");
 
-  try {
-    browser = await chromium.puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath,
-      headless: true,
-    });
+  // rewrite headers for Vercel serverless
+  req.headers.host = new URL(targetUrl).host;
 
-    const page = await browser.newPage();
-    await page.goto(url, { waitUntil: "networkidle2" });
-
-    const html = await page.content();
-    res.setHeader("Content-Type", "text/html");
-    res.send(html);
-
-  } catch (err) {
+  proxy.web(req, res, { target: targetUrl }, err => {
     console.error(err);
     res.status(500).send("Proxy error: " + err.message);
-  } finally {
-    if (browser) await browser.close();
-  }
+  });
 }
 
-export const config = { api: { bodyParser: false } };
+// Prevent Vercel cold-start issues with CORS
+export const config = { api: { bodyParser: false, externalResolver: true } };
