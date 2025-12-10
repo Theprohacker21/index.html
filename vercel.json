@@ -1,7 +1,6 @@
 {
   "version": 2,
-  "routes": [
-    { "src": "/proxy", "dest": "/proxy.js" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" }
   ]
 }
