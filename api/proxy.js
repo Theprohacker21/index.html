@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
     const page = await browser.newPage();
 
-    // Optional: set a realistic user-agent to avoid basic bot detection
+    // Set a realistic user-agent
     await page.setUserAgent(
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
       "(KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
@@ -25,9 +25,8 @@ export default async function handler(req, res) {
     // Navigate to the requested URL
     await page.goto(url, { waitUntil: "networkidle2", timeout: 10000 });
 
-    // Capture full page HTML
+    // Return rendered HTML
     const html = await page.content();
-
     res.setHeader("Content-Type", "text/html");
     res.send(html);
 
