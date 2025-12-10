@@ -1,8 +1,18 @@
 {
+  "version": 2,
   "functions": {
     "api/proxy.js": {
       "memory": 1024,
       "maxDuration": 10
     }
-  }
+  },
+  "build": {
+    "env": {
+      "NPM_FLAGS": "--legacy-peer-deps"
+    }
+  },
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/proxy.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
 }
