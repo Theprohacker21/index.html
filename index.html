@@ -3,278 +3,127 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Scramjet Proxy — Chrome-like UI (Dark Blue)</title>
-
-  <!--
-    Single-file UI for the Scramjet proxy.
-    IMPORTANT: This file only contains the frontend (UI + client JS).
-    It expects a server-side proxy endpoint at /proxy that accepts a `url` query param
-    (e.g. /proxy?url=https://example.com) and returns either rewritten HTML or the raw asset.
-    If you don't have a server-side /proxy endpoint, this page cannot fetch arbitrary third-party sites
-    because of browser CORS/security restrictions.
-
-    If you want a single deployment that also provides the proxy behavior, you must also deploy a server-side
-    component (e.g. the earlier server.js Express proxy or a serverless function) that implements /proxy.
-  -->
-
+  <title>Scramjet Proxy — Chrome-like UI</title>
   <style>
-  :root{
-    --bg: #07182b; /* very dark blue */
-    --panel: #0b2447; /* main dark blue */
-    --accent: #2ea6ff; /* bright blue accent */
-    --muted: #bcd8ff;
-    --text: #e6f0ff;
-    --radius: 12px;
-    --sidebar-width: 260px;
-    --topbar-height: 64px;
-    --glass: rgba(255,255,255,0.02);
-  }
-
-  *{box-sizing:border-box}
-  html,body,#app{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial}
-  body{
-    background: linear-gradient(180deg, var(--bg), #061427 120%);
-    color:var(--text);
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-  }
-
-  /* App layout */
-  #app{display:flex;height:100vh;gap:20px;padding:20px}
-
-  /* Sidebar */
-  .sidebar{
-    width:var(--sidebar-width);
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));
-    border-radius:var(--radius);
-    padding:18px;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    box-shadow: 0 6px 20px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.03);
-  }
-
-  /* Brand */
-  .brand{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-  .logo{
-    width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#1e90ff);
-    display:flex;align-items:center;justify-content:center;font-weight:700;color:#041026;
-    box-shadow: 0 6px 18px rgba(46,166,255,0.12);
-  }
-  .title{font-weight:600;font-size:18px;color:var(--muted)}
-
-  /* Nav */
-  nav{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-  .nav-btn{
-    background:transparent;border:0;padding:10px 12px;border-radius:9px;color:var(--muted);text-align:left;cursor:pointer;
-    transition:all .12s ease;font-weight:600;
-  }
-  .nav-btn:hover{background:rgba(255,255,255,0.02);transform:translateX(4px)}
-  .nav-btn.active{background:linear-gradient(90deg, rgba(46,166,255,0.06), rgba(46,166,255,0.02));color:var(--text)}
-
-  /* Sidebar footer */
-  .sidebar-footer{font-size:12px;color:rgba(255,255,255,0.35);text-align:center;padding-top:8px}
-
-  /* Main area */
-  .main{flex:1;display:flex;flex-direction:column;gap:12px}
-
-  /* Topbar (browser-like) */
-  .topbar{
-    height:var(--topbar-height);
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:12px;
-    display:flex;align-items:center;padding:10px 16px;gap:12px;border:1px solid rgba(255,255,255,0.03);
-    box-shadow: 0 6px 18px rgba(2,6,23,0.6);
-  }
-
-  /* faux window controls */
-  .window-controls{display:flex;gap:8px;align-items:center;margin-right:8px}
-  .dot{width:12px;height:12px;border-radius:50%;display:inline-block}
-  .dot.close{background:#ff5f56}
-  .dot.minimize{background:#ffbd2e}
-  .dot.maximize{background:#27c93f}
-
-  /* address group */
-  .address-group{display:flex;align-items:center;gap:8px;flex:1}
-  .address-group .ctrl{
-    background:transparent;border:0;color:var(--muted);font-weight:700;padding:6px 8px;border-radius:8px;cursor:pointer;
-  }
-  .address-group input[type="text"]{
-    flex:1;padding:10px 12px;border-radius:10px;border:0;background:var(--glass);color:var(--text);outline:none;
-    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.3);
-    border:1px solid rgba(255,255,255,0.02);
-  }
-  .address-group .go{
-    background: linear-gradient(180deg, rgba(46,166,255,0.14), rgba(46,166,255,0.08));border:0;color:#041026;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700;
-    box-shadow: 0 6px 14px rgba(46,166,255,0.08);
-  }
-
-  /* content area */
-  .content{
-    flex:1;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
-    border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.02);
-  }
-  .content iframe{
-    width:100%;height:calc(100vh - 150px);border:0;display:block;background:white;border-radius:0;
-  }
-
-  /* small responsive */
-  @media (max-width:900px){
-    .sidebar{display:none}
-    #app{padding:12px}
-  }
-
-  /* helper styles */
-  button[disabled]{opacity:0.35;cursor:not-allowed}
+    /* ... your previous CSS ... */
+    :root{--bg:#07182b;--panel:#0b2447;--accent:#2ea6ff;--muted:#bcd8ff;--text:#e6f0ff;--radius:12px;--sidebar-width:260px;--topbar-height:64px;--glass:rgba(255,255,255,0.02)}
+    *{box-sizing:border-box}
+    html,body,#app{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}
+    body{background:linear-gradient(180deg,var(--bg),#061427 120%);color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    #app{display:flex;height:100vh;gap:20px;padding:20px}
+    .sidebar{width:var(--sidebar-width);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 6px 20px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03)}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#1e90ff);display:flex;align-items:center;justify-content:center;font-weight:700;color:#041026;box-shadow:0 6px 18px rgba(46,166,255,0.12)}
+    .title{font-weight:600;font-size:18px;color:var(--muted)}
+    nav{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .nav-btn{background:transparent;border:0;padding:10px 12px;border-radius:9px;color:var(--muted);text-align:left;cursor:pointer;transition:all .12s ease;font-weight:600}
+    .nav-btn:hover{background:rgba(255,255,255,0.02);transform:translateX(4px)}
+    .nav-btn.active{background:linear-gradient(90deg, rgba(46,166,255,0.06), rgba(46,166,255,0.02));color:var(--text)}
+    .sidebar-footer{font-size:12px;color:rgba(255,255,255,0.35);text-align:center;padding-top:8px}
+    .main{flex:1;display:flex;flex-direction:column;gap:12px}
+    .topbar{height:var(--topbar-height);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;display:flex;align-items:center;padding:10px 16px;gap:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    .window-controls{display:flex;gap:8px;align-items:center;margin-right:8px}
+    .dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+    .dot.close{background:#ff5f56}
+    .dot.minimize{background:#ffbd2e}
+    .dot.maximize{background:#27c93f}
+    .address-group{display:flex;align-items:center;gap:8px;flex:1}
+    .address-group .ctrl{background:transparent;border:0;color:var(--muted);font-weight:700;padding:6px 8px;border-radius:8px;cursor:pointer}
+    .address-group input[type="text"]{flex:1;padding:10px 12px;border-radius:10px;border:0;background:var(--glass);color:var(--text);outline:none;box-shadow:inset 0 -1px 0 rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.02)}
+    .address-group .go{background:linear-gradient(180deg, rgba(46,166,255,0.14), rgba(46,166,255,0.08));border:0;color:#041026;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700;box-shadow:0 6px 14px rgba(46,166,255,0.08)}
+    .content{flex:1;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
+    .content iframe{width:100%;height:calc(100vh - 150px);border:0;display:block;background:white;border-radius:0}
+    @media (max-width:900px){.sidebar{display:none}#app{padding:12px}}
+    button[disabled]{opacity:0.35;cursor:not-allowed}
   </style>
 </head>
 <body>
-  <div id="app">
-    <aside class="sidebar">
-      <div>
-        <div class="brand">
-          <div class="logo">S</div>
-          <div class="title">Scramjet</div>
-        </div>
-        <nav>
-          <button class="nav-btn active" data-view="browse">Browse</button>
-          <button class="nav-btn" data-view="bookmarks">Bookmarks</button>
-          <button class="nav-btn" data-view="history">History</button>
-          <button class="nav-btn" data-view="settings">Settings</button>
-        </nav>
+<div id="app">
+  <aside class="sidebar">
+    <div>
+      <div class="brand"><div class="logo">S</div><div class="title">Scramjet</div></div>
+      <nav>
+        <button class="nav-btn active" data-view="browse">Browse</button>
+        <button class="nav-btn" data-view="bookmarks">Bookmarks</button>
+        <button class="nav-btn" data-view="history">History</button>
+        <button class="nav-btn" data-view="settings">Settings</button>
+      </nav>
+    </div>
+    <div class="sidebar-footer">v1.0</div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="window-controls" title="Window controls">
+        <span class="dot close"></span>
+        <span class="dot minimize"></span>
+        <span class="dot maximize"></span>
       </div>
-      <div class="sidebar-footer">v1.0</div>
-    </aside>
-
-    <main class="main">
-      <header class="topbar">
-        <div class="window-controls" title="Window controls">
-          <span class="dot close"></span>
-          <span class="dot minimize"></span>
-          <span class="dot maximize"></span>
-        </div>
-
-        <div class="address-group">
-          <button id="backBtn" class="ctrl" aria-label="Back">◀</button>
-          <button id="forwardBtn" class="ctrl" aria-label="Forward">▶</button>
-
-          <input id="urlInput" type="text" placeholder="Enter a URL (https://example.com)" />
-          <button id="goBtn" class="go">Go</button>
-
-          <div class="profile" style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#1e90ff);margin-left:8px"></div>
-        </div>
-      </header>
-
-      <div class="content">
-        <iframe id="viewport" src="/proxy?url=" frameborder="0" sandbox="allow-forms allow-same-origin allow-scripts"></iframe>
+      <div class="address-group">
+        <button id="backBtn" class="ctrl" aria-label="Back">◀</button>
+        <button id="forwardBtn" class="ctrl" aria-label="Forward">▶</button>
+        <input id="urlInput" type="text" placeholder="Enter a URL (https://example.com)" />
+        <button id="goBtn" class="go">Go</button>
+        <div class="profile" style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#1e90ff);margin-left:8px"></div>
       </div>
-    </main>
-  </div>
+    </header>
+    <div class="content">
+      <iframe id="viewport" src="/proxy?url=https://example.com" frameborder="0" sandbox="allow-forms allow-same-origin allow-scripts"></iframe>
+    </div>
+  </main>
+</div>
 
-  <script>
-  // Single-file frontend logic (inlined).
-  (function(){
-    const urlInput = document.getElementById('urlInput');
-    const goBtn = document.getElementById('goBtn');
-    const iframe = document.getElementById('viewport');
-    const backBtn = document.getElementById('backBtn');
-    const forwardBtn = document.getElementById('forwardBtn');
-    const navButtons = document.querySelectorAll('.nav-btn');
+<script>
+(function(){
+  const urlInput = document.getElementById('urlInput');
+  const goBtn = document.getElementById('goBtn');
+  const iframe = document.getElementById('viewport');
+  const backBtn = document.getElementById('backBtn');
+  const forwardBtn = document.getElementById('forwardBtn');
+  const navButtons = document.querySelectorAll('.nav-btn');
 
-    const historyStack = [];
-    let historyIndex = -1;
+  const historyStack = [];
+  let historyIndex = -1;
 
-    navButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        // simple view switch - for now, only visual
-      });
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
     });
+  });
 
-    function normalizeUrl(input){
-      input = input.trim();
-      if (!input) return null;
-      try {
-        // If scheme missing, assume https
-        if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(input)) {
-          input = 'https://' + input;
-        }
-        const url = new URL(input);
-        return url.toString();
-      } catch (e) {
-        return null;
-      }
-    }
+  function normalizeUrl(input){
+    input = input.trim();
+    if (!input) return null;
+    try {
+      if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(input)) input = 'https://' + input;
+      return new URL(input).toString();
+    } catch { return null; }
+  }
 
-    function navigateTo(raw){
-      const url = normalizeUrl(raw);
-      if (!url) {
-        alert('Please enter a valid URL (e.g. https://example.com)');
-        return;
-      }
-      // push to history (truncate forward history)
-      if (historyIndex < historyStack.length - 1) {
-        historyStack.splice(historyIndex + 1);
-      }
-      historyStack.push(url);
-      historyIndex = historyStack.length - 1;
-      updateNavButtons();
-      // set iframe to proxied URL
-      iframe.src = '/proxy?url=' + encodeURIComponent(url);
-      urlInput.value = url;
-    }
+  function navigateTo(raw){
+    const url = normalizeUrl(raw);
+    if (!url) { alert('Please enter a valid URL'); return; }
+    if (historyIndex < historyStack.length - 1) historyStack.splice(historyIndex + 1);
+    historyStack.push(url);
+    historyIndex = historyStack.length - 1;
+    updateNavButtons();
+    iframe.src = '/proxy?url=' + encodeURIComponent(url);
+    urlInput.value = url;
+  }
 
-    function goBack(){
-      if (historyIndex > 0) {
-        historyIndex--;
-        const url = historyStack[historyIndex];
-        iframe.src = '/proxy?url=' + encodeURIComponent(url);
-        urlInput.value = url;
-        updateNavButtons();
-      }
-    }
-    function goForward(){
-      if (historyIndex < historyStack.length - 1) {
-        historyIndex++;
-        const url = historyStack[historyIndex];
-        iframe.src = '/proxy?url=' + encodeURIComponent(url);
-        urlInput.value = url;
-        updateNavButtons();
-      }
-    }
+  function goBack(){ if(historyIndex>0){ historyIndex--; const url=historyStack[historyIndex]; iframe.src='/proxy?url='+encodeURIComponent(url); urlInput.value=url; updateNavButtons(); } }
+  function goForward(){ if(historyIndex<historyStack.length-1){ historyIndex++; const url=historyStack[historyIndex]; iframe.src='/proxy?url='+encodeURIComponent(url); urlInput.value=url; updateNavButtons(); } }
+  function updateNavButtons(){ backBtn.disabled=historyIndex<=0; forwardBtn.disabled=historyIndex>=historyStack.length-1; }
 
-    function updateNavButtons(){
-      backBtn.disabled = historyIndex <= 0;
-      forwardBtn.disabled = historyIndex >= historyStack.length - 1;
-    }
+  goBtn.addEventListener('click', () => navigateTo(urlInput.value));
+  urlInput.addEventListener('keydown', e => { if(e.key==='Enter') navigateTo(urlInput.value); });
+  backBtn.addEventListener('click', goBack);
+  forwardBtn.addEventListener('click', goForward);
 
-    goBtn.addEventListener('click', () => navigateTo(urlInput.value));
-    urlInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') navigateTo(urlInput.value);
-    });
-    backBtn.addEventListener('click', goBack);
-    forwardBtn.addEventListener('click', goForward);
-
-    // Load a default page on start
-    const defaultUrl = 'https://example.com';
-    urlInput.value = defaultUrl;
-    navigateTo(defaultUrl);
-
-    // Small helpful warning if /proxy returns 404 or network error (best-effort)
-    iframe.addEventListener('load', () => {
-      // Try to detect a same-origin error page by attempting to access iframe contentWindow
-      try {
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-        if (doc && doc.body && doc.body.innerText && doc.body.innerText.toLowerCase().includes('error')) {
-          // no-op: heuristic only
-        }
-      } catch (e) {
-        // Access denied for cross-origin frames — expected for many proxied pages.
-      }
-    });
-  })();
-  </script>
+  const defaultUrl = 'https://example.com';
+  urlInput.value = defaultUrl;
+  navigateTo(defaultUrl);
+})();
+</script>
 </body>
 </html>
